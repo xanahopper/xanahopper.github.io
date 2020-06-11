@@ -147,6 +147,101 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.xanahopper.com/Rust/rust-note-i/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Xana Hopper">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹叶小店">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/Rust/rust-note-i/" class="post-title-link" itemprop="url">Rust 笔记 I</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-06-11 22:34:07 / 修改时间：22:35:23" itemprop="dateCreated datePublished" datetime="2020-06-11T22:34:07+08:00">2020-06-11</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Rust/" itemprop="url" rel="index"><span itemprop="name">Rust</span></a>
+                </span>
+            </span>
+
+          
+            <span id="/Rust/rust-note-i/" class="post-meta-item leancloud_visitors" data-flag-title="Rust 笔记 I" title="阅读次数">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">阅读次数：</span>
+              <span class="leancloud-visitors-count"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine：</span>
+    
+    <a title="valine" href="/Rust/rust-note-i/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/Rust/rust-note-i/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Rust 的字符串本质上是 <code>u8</code> 序列，但是很多时候从 <code>u8</code> 序列转换回字符串是有风险的，毕竟并不是所有的 <code>u8</code> 序列都是有效的 字符串。<br>所以原则上来说，能直接使用 <code>char</code> 对字符串处理是最好的。</p>
+<h2 id="字符串与Chars"><a href="#字符串与Chars" class="headerlink" title="字符串与Chars"></a>字符串与<code>Chars</code></h2><p>通过 <code>str.chars()</code> 可以获得一个 <code>Chars</code> 结构，他的定义如下</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="class"><span class="keyword">struct</span> <span class="title">Chars</span></span>&lt;<span class="symbol">'a</span>&gt; &#123;</span><br><span class="line">    iter: slice::Iter&lt;<span class="symbol">'a</span>, <span class="built_in">u8</span>&gt;,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但它是一个迭代器，字符串处理中经常需要随机访问，<code>Chars.nth(mut n: usize)</code> 可以获取到第 N 个字符（其实这是一个 <code>Iterator</code>  trait 的方法），但是代价是这是一个 <code>O(n)</code> 的操作。通过空间换时间，可以这么做</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> chars = s.chars().collect::&lt;<span class="built_in">Vec</span>&lt;_&gt;&gt;();</span><br></pre></td></tr></table></figure>
+<p>不过当大部分操作都是顺序操作的时候，用迭代器才是最优解。</p>
+<h2 id="substring"><a href="#substring" class="headerlink" title="substring"></a>substring</h2><p>我找了一圈，没找到这个在其他语言中司空见惯的方法，不过想来 Java 中 substring 是一份复制，Rust 中对于复制总是谨慎的。<br>并且由于对于一个 String/str 任意位置的做切片是一件很危险的事情，因为他不能保证切片位置不是一个 Unicode 字符中间，所以最佳的方案，依旧是——处理一个 <code>Vec&lt;char&gt;</code></p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="http://blog.xanahopper.com/summary/2019-summary/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -429,16 +524,16 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
       <div class="site-state-item site-state-categories">
-        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">分类</span>
       </div>
       <div class="site-state-item site-state-tags">
-        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-count">3</span>
         <span class="site-state-item-name">标签</span>
       </div>
   </nav>
