@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.1.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.1.1/css/all.min.css" integrity="sha256-DfWjNxDkM94fVBWx1H5BMMp0Zq7luBlV8QRcSES7s+0=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"blog.xanahopper.com","root":"/","images":"/images","scheme":"Pisces","darkmode":false,"version":"8.11.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":true},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":"valine","storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="原地址：https:&#x2F;&#x2F;suragch.medium.com&#x2F;flutter-state-management-for-minimalists-4c71a2f2f0c1  Flutter 对我来说最大的挑战就是学习状态管理。人们都在讨论什么 Provider、Bloc、ScopedModel和 Redux 和 MobX 之类的，我实在不知道他们在说些什么。随着时间的推移，状态管理解决方案的列表却">
+<meta property="og:type" content="article">
+<meta property="og:title" content="[译] 极简主义者的 Flutter 状态管理（一）">
+<meta property="og:url" content="http://blog.xanahopper.com/Tech/flutter-state-manager-for-minimalists-1/index.html">
+<meta property="og:site_name" content="竹叶小店">
+<meta property="og:description" content="原地址：https:&#x2F;&#x2F;suragch.medium.com&#x2F;flutter-state-management-for-minimalists-4c71a2f2f0c1  Flutter 对我来说最大的挑战就是学习状态管理。人们都在讨论什么 Provider、Bloc、ScopedModel和 Redux 和 MobX 之类的，我实在不知道他们在说些什么。随着时间的推移，状态管理解决方案的列表却">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1h1mbyz4epgj211u0u0abr.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1h1mc382ph7j211u0u0t9x.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1h1mdesbdrlj211u0u00u0.jpg">
+<meta property="og:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1h1z2shpyx2j211u0u0gmz.jpg">
+<meta property="article:published_time" content="2022-04-25T13:45:29.000Z">
+<meta property="article:modified_time" content="2022-05-06T15:11:03.256Z">
+<meta property="article:author" content="Xana Hopper">
+<meta property="article:tag" content="Flutter">
+<meta property="article:tag" content="State Manage">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://tva1.sinaimg.cn/large/e6c9d24ely1h1mbyz4epgj211u0u0abr.jpg">
+
+
+<link rel="canonical" href="http://blog.xanahopper.com/Tech/flutter-state-manager-for-minimalists-1/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://blog.xanahopper.com/Tech/flutter-state-manager-for-minimalists-1/","path":"Tech/flutter-state-manager-for-minimalists-1/","title":"[译] 极简主义者的 Flutter 状态管理（一）"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>[译] 极简主义者的 Flutter 状态管理（一） | 竹叶小店</title>
+  
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">竹叶小店</p>
+      <i class="logo-line"></i>
+    </a>
+      <p class="site-subtitle" itemprop="description">Coding for fun</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-about"><a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a></li><li class="menu-item menu-item-archives"><a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a></li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle" role="button">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#App-%E6%9E%B6%E6%9E%84%E6%80%BB%E8%A7%88"><span class="nav-number">1.</span> <span class="nav-text">App 架构总览</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UI-%E5%B1%82"><span class="nav-number">2.</span> <span class="nav-text">UI 层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%8A%B6%E6%80%81%E7%AE%A1%E7%90%86%E5%B1%82"><span class="nav-number">3.</span> <span class="nav-text">状态管理层</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E5%B1%82"><span class="nav-number">4.</span> <span class="nav-text">服务层</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Xana Hopper"
+      src="/images/avatar.jpg">
+  <p class="site-author-name" itemprop="name">Xana Hopper</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">3</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+        <span class="site-state-item-count">2</span>
+        <span class="site-state-item-name">分类</span>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author site-overview-item animated">
+      <span class="links-of-author-item">
+        <a href="https://github.com/xanahopper" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;xanahopper" rel="noopener" target="_blank"><i class="github fa-fw"></i></a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:xanahopper@163.com" title="E-Mail → mailto:xanahopper@163.com" rel="noopener" target="_blank"><i class="envelope fa-fw"></i></a>
+      </span>
+  </div>
+  <div class="cc-license site-overview-item animated" itemprop="license">
+    <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" class="cc-opacity" rel="noopener" target="_blank"><img src="https://cdn.jsdelivr.net/npm/@creativecommons/vocabulary@2020.11.3/assets/license_badges/small/by_nc_sa.svg" alt="Creative Commons"></a>
+  </div>
+
+
+
+        </div>
+      </div>
+        <div class="back-to-top animated" role="button" aria-label="返回顶部">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://blog.xanahopper.com/Tech/flutter-state-manager-for-minimalists-1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.jpg">
+      <meta itemprop="name" content="Xana Hopper">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="竹叶小店">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="[译] 极简主义者的 Flutter 状态管理（一） | 竹叶小店">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          [译] 极简主义者的 Flutter 状态管理（一）
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2022-04-25 21:45:29" itemprop="dateCreated datePublished" datetime="2022-04-25T21:45:29+08:00">2022-04-25</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2022-05-06 23:11:03" itemprop="dateModified" datetime="2022-05-06T23:11:03+08:00">2022-05-06</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/Tech/" itemprop="url" rel="index"><span itemprop="name">Tech</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <blockquote>
+<p>原地址：<a target="_blank" rel="noopener" href="https://suragch.medium.com/flutter-state-management-for-minimalists-4c71a2f2f0c1">https://suragch.medium.com/flutter-state-management-for-minimalists-4c71a2f2f0c1</a></p>
+</blockquote>
+<p>Flutter 对我来说最大的挑战就是学习状态管理。人们都在讨论什么 <code>Provider</code>、<code>Bloc</code>、<code>ScopedModel</code>和 <code>Redux</code> 和 <code>MobX</code> 之类的，我实在不知道他们在说些什么。随着时间的推移，状态管理解决方案的列表却不断的在增长。</p>
+<p>在我的学习旅程中，我写了不少文章，关于 <code>Stacked</code>、<code>Provider</code>、<code>Riverpod</code>，也学习过 <code>Bloc</code> 模式和 <code>Bloc Library</code> 的教程，看了 <code>Cubit</code> 和 <code>GetX</code>，也看过 <code>Redux</code> 和 <code>MobX</code> 以及 <code>Command</code> 视频。但是这些库总是不能十分契合我的想法，他们要么有太多的选项，要么有太多的隐藏在背后的魔法。我的大脑需要简单和易于理解的极简。</p>
+<p>这就是这篇文章的由来。我将要介绍一种方式来管理你的 App 状态，不需要引入任何第三方状态管理方案。唯一需要使用的第三方库是 <code>GetIt</code>，它不是用来管理状态的，只是用来提供一个引用，访问你将要管理的状态的 Dart 类。</p>
+<p>对于状态变化时的 UI 重建，将使用 Flutter 内建的 <code>ValueNotifier</code> 和 <code>ValueListenableBuilder</code> 类。</p>
+<p>这篇文章的目的不是让你远离你现在使用的状态管理方案，毕竟如果当前方案适合你，确实没有任何理由去改变。然而，这篇文章是给像我一样的不了解状态管理的人的引导，为那些脑子还在弯弯绕的人们提供一个直观的解释。</p>
+<h2 id="App-架构总览"><a href="#App-架构总览" class="headerlink" title="App 架构总览"></a>App 架构总览</h2><p>尽管可以把所有的 UI 和逻辑混合在一起，写在一个大文件里来构造一个 Flutter App，但是那样实在是难以去搞清楚这个 App 是如何运作的。对于大部分 App 来说，它们都至少会使用一点架构。</p>
+<p>我们先从一个传统的 App 架构总览开始，下面每个的方框代表一个类或文件，或者是一个文件夹的文件。用这个 App 中的两个页面代表你整个 App 中的 10 到 20 个页面。</p>
+<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1mbyz4epgj211u0u0abr.jpg"></p>
+<p>这其中一共有三个层级：UI 层，状态管理层，以及 Service 层。我们将要在下面的几节中逐个讨论他们的细节。</p>
+<span id="more"></span>
+
+<h2 id="UI-层"><a href="#UI-层" class="headerlink" title="UI 层"></a>UI 层</h2><p>UI 层就是 Flutter 所在的层级，满是框架、按钮、列和文本 Widget 之类的这些用来合成用户看到的 App 布局。</p>
+<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1mc382ph7j211u0u0t9x.jpg" alt="UI 层"></p>
+<p>UI 层内的逻辑应当尽可能的少，这里所需要做的就只是拿到 App 当前的状态，把他们更好的展示给用户。</p>
+<blockquote>
+<p>当我讨论 <code>状态</code> 时，是指 App 中能变化的部分，也就是 <code>变量</code></p>
+<ul>
+<li>如果 App 的背景色是蓝色的但是用户将它变更为红色，那么颜色就是状态</li>
+<li>如果用户将一个列表向下滚动到一半，那么滚动的量就是状态</li>
+<li>如果从网络加载了一个图片，那么图片就是状态</li>
+</ul>
+</blockquote>
+<p>再说一遍，UI 层唯一的职责就是把 App 的状态展示给用户，不要在这里做解析或者格式化之类的，那是逻辑，他们属于另一个层级。不要在这里做任何初始化、登录之类的工作，那些都是逻辑，都属于其他层级。也不要在这里保存数据，这也是逻辑，它们属于其他层级。</p>
+<p>可以很肯定的是，UI 层唯一能看到的逻辑应当是 <code>if</code> 和 <code>switch</code> 之类的，用来选择正确的 Widget 来展示当前App 的状态。</p>
+<blockquote>
+<p><strong>警告</strong>：<br>当你在写一个自包含（self-contined）的 Widget 时（这意味着你可以在你想要的情况下发布自己的 package），它的内部会包含一些由参数用来完成的逻辑。。这种情况在 Flutter framework 层比比皆是，它们有可能是一个简单的 <code>StatefulWidget</code> 或者一个自定义渲染的 Widget。<br>关键在于，Widget 的状态是自持有在内部的，官方文档中称其为<strong>短期状态（Ephemeral State）</strong>。与其相对应的是 <strong>App 状态</strong>，是在 Widget 外部使用的。<br>我想说的是，App 的状态，以及你用来展示的逻辑应当远离 UI 层。</p>
+</blockquote>
+<p>为了知道何时显示更新，UI 层需要监听 App 状态的变化。监听状态，并在状态变化时 rebuild 的 Widget 一般被称为 Builder Widget。</p>
+<p>另一个重要的事情需要注意的是，尽管上面的例子提到登录页和首页，你也可以用其他更简单的页面去替代它们，比如一个表单，或者一个文本区域。毕竟所有的东西只是 Widget，哪怕是页面。</p>
+<p>所有想要放在 UI 层里面做的逻辑，都应当放在状态管理层</p>
+<h2 id="状态管理层"><a href="#状态管理层" class="headerlink" title="状态管理层"></a>状态管理层</h2><p>这个层级有无数个名称，一些人叫它 <code>ViewModel</code>，另一些人叫它 <code>Controller</code>，还有一些人叫它 <code>BLoC</code> 或者 <code>Model</code> 或者 <code>Reducer</code> 或者 <code>ChangeNotifier</code>，这些基本都是一个意思。这个状态管理层是用来执行基于 UI 事件的逻辑，并更新 App 状态的。</p>
+<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1mdesbdrlj211u0u00u0.jpg" alt="状态管理层"></p>
+<p><strong>事件</strong>，代表着 App 中发生的某件事，通常来说是用户操作，比如按下按钮，下拉刷新，点击图片或者输入文字。UI 层的职责就是将这些发生的事件通知状态管理层。简单来说，就是简单的调用状态管理类的方法。</p>
+<p>一旦状态管理层收到来自 UI 层的事件，它便开始处理事件。举个例子，如果用户按下了你计算器 App 中的开根号按钮，状态管理层的职责就是实际的计算<strong>当前数字</strong>的平方根。这个数字是 App 的状态，并在以变量的形式储存在状态管理类中。当状态管理类完成了计算平方根的工作，它会用新的值去更新它。</p>
+<blockquote>
+<p>在上面这个例子中，状态管理不仅应当进行开平方的计算工作，也应当包揽所有的字符串格式化工作，以便 UI 能够以它想要的形式展示它。举个例子，2 的平方根是 1.41421356237，但是 UI 只需要展示四位小数，那么状态管理类的职责就是将这个数字转换成字符串<code>&#39;1.4142&#39;</code>。<br>当然，一些人可能不同意我这个观点，但是我想说的是，将逻辑放在状态管理层越多越好。这么做的一个原因是，状态管理层比 UI 层好测试的多。</p>
+</blockquote>
+<p>状态管理层提供给 UI 一个监听 App 状态变化的途径，但是并不知道具体是哪个 UI 在监听。也正因为如此，你可以随意的重构 UI，完全不用担心去改变状态管理层。这是构建可伸缩的、可维护的 App 的重要建议。</p>
+<p>当然，尽管状态管理层是一个执行逻辑的极佳位置，担并不是 App 所有的逻辑都应当放在这里，一些逻辑应当移动至服务层。</p>
+<h2 id="服务层"><a href="#服务层" class="headerlink" title="服务层"></a>服务层</h2><p>服务层，有时候也被称作<strong>数据仓库（data repository）</strong>，是用来执行逻辑，以及存放可能会被 App 中多个地方使用的数据的。它也是为你的 App 逻辑和其他用来执行类似读取数据库、访问网络等 I&#x2F;O 任务的第三方代码之间添加一个保护层的途径。这一层保护允许你切换服务的具体实现，而不用担心破坏你其他 App 的代码。</p>
+<p><img src="https://tva1.sinaimg.cn/large/e6c9d24ely1h1z2shpyx2j211u0u0gmz.jpg" alt="服务层"></p>
+<p>正如上图所示，存储服务在两个不同的页面通过状态管理层被调用。使用一个服务来执行任务，防止你在 App 中多个位置复制同样的代码，同样的，在你需要时，你会有一个单独的位置来升级这些逻辑。</p>
+<p>从状态管理层的视角来看，服务层只是一个<strong>接口</strong>，也就是一个虚 Dart 类，定义了你能调用的方法。一旦你定义了接口 API，你在构建一个服务的时候就必须实现这些虚方法。举个例子，存储服务接口可以有两个实现，它们储存和接受数据，一个来自网络，一个老子本地数据库。选择哪一个都行，状态管理层并不在乎。有时候，实现一个只返回假数据的实现都是有用的。这允许你先创建一个 App 的可用原型出来，然后再去构建真正的服务实现。</p>
+<p>尽管上面的例子中只展示了一个存储服务，但你的 App 中这场可能有多个不同的服务。比如在登录页，你可能需要一个授权验证服务。</p>
+<blockquote>
+<p>如果你 App 中只有一个地方需要一个服务，你可以将代码直接放在状态管理层。但是，如果你想要做一些诸如切换数据库实现、切换授权提供方之类的，为了解耦就必须做很多工作了。有时候需要这种痛苦的经历来给自己上一课。所以，这都取决于你。</p>
+</blockquote>
+<p>这些就是高层总览了，下一节我会更详细的描述如何实现上面我所描述的架构模式——完全不需要复杂的第三方状态管理库。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          
+
+<div class="post-copyright">
+<ul>
+  <li class="post-copyright-author">
+      <strong>本文作者： </strong>Xana Hopper
+  </li>
+  <li class="post-copyright-link">
+      <strong>本文链接：</strong>
+      <a href="http://blog.xanahopper.com/Tech/flutter-state-manager-for-minimalists-1/" title="[译] 极简主义者的 Flutter 状态管理（一）">http://blog.xanahopper.com/Tech/flutter-state-manager-for-minimalists-1/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
+  </li>
+</ul>
+</div>
+
+          <div class="post-tags">
+              <a href="/tags/Flutter/" rel="tag"># Flutter</a>
+              <a href="/tags/State-Manage/" rel="tag"># State Manage</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/summary/2019-summary/" rel="prev" title="2019 总结">
+                  <i class="fa fa-chevron-left"></i> 2019 总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 2017 – 
+  <span itemprop="copyrightYear">2022</span>
+  <span class="with-love">
+    <i class="user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Xana Hopper</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/pisces/" rel="noopener" target="_blank">NexT.Pisces</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/animejs@3.2.1/lib/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+</body>
+</html>
